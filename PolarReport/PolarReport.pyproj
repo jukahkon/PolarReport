@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>3126221f-81ff-4dc2-85c3-9dfe1949e925</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>PolarReport.py</StartupFile>
+    <StartupFile>ReportReader.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -23,6 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="PolarReport.py" />
+    <Compile Include="ReportReader.py" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
