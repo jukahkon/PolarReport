@@ -18,8 +18,8 @@ COVER_DATE_ROW = 5
 COVER_NAME_ROW = 7
 COVER_EMAIL_ROW = 8
 PROJECT_NUMBER_COL = 2
-PROJECT_NAME_COL = 3
-ORDER_NUMBER_COL = 2
+PROJECT_NAME_COL = 4
+ORDER_NUMBER_COL = 6
 DATE_ROW = 7
 
 def openExcelWorkbook(fileName):
@@ -83,30 +83,29 @@ def createWorkEntries(sheet,project_rows, date_cols):
 
     for i in project_rows:
         project_number = sheet.cell(row=i, column=PROJECT_NUMBER_COL).value
-        
+        order_number = sheet.cell(row=i, column=ORDER_NUMBER_COL).value
+        work_description = sheet.cell(row=i, column=PROJECT_NAME_COL).value
+
         if not project_number:
             print "Virhe: projektinumero puuttuu"
         
-        project_name = sheet.cell(row=i, column=PROJECT_NAME_COL).value
-        order_number = sheet.cell(row=i, column=ORDER_NUMBER_COL).value
-
         for j in date_cols:
             entry = {}
             
             fields = ['norm', 'ext50', 'ot50', 'ot100', 'ot150', \
                       'ot200', 'otwk', 'travel', 'km', 'meal', \
-                      'pallow', 'dallow' ]
+                      'allow50', 'allow100' ]
 
             for k in range(0, len(fields)):
-                val = sheet.cell(row=i,column=j).value
+                val = sheet.cell(row=i+k, column=j).value
                 if val:
                     entry[fields[k]] = val
 
             if entry:
                 entry['project_num'] = project_number
-                entry['project_name'] = project_number
                 entry['order_num'] = order_number
                 entry['work_date'] = sheet.cell(row=DATE_ROW, column=j).value
+                entry['work_desc'] = work_description
                 
                 entries.append(entry)
 

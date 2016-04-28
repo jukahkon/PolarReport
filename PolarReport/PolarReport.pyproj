@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>3126221f-81ff-4dc2-85c3-9dfe1949e925</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>ReportReader.py</StartupFile>
+    <StartupFile>DatabaseHandler.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,6 +22,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DatabaseHandler.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PolarReport.py" />
     <Compile Include="ReportReader.py" />
   </ItemGroup>
