@@ -3,7 +3,7 @@ import os.path
 import sys
 import datetime
 
-# Current DB connection
+# DB connection
 conn = None
 
 def connectToDatabase(fileName):
@@ -15,58 +15,88 @@ def connectToDatabase(fileName):
 
     conn = sqlite3.connect(fileName)
     
-    return emptyDb
+    if emptyDb:
+        createTables()
 
 def createTables():
     c = conn.cursor()
 
-    c.execute('CREATE TABLE "main"."Employee" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
-                                               "name" TEXT, "email" TEXT)')
-    c.execute('CREATE TABLE "main"."Project" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
-                                              "number" INTEGER NOT NULL, "description" TEXT)')
-    c.execute('CREATE TABLE "main"."Orderx" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \
-                                            "number" TEXT NOT NULL, "description" TEXT,\
-                                            "project_id" INTEGER)')
-    c.execute('CREATE TABLE "main"."WorkDescription" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, \
-                                                      "description" TEXT)')
-    c.execute('CREATE TABLE "main"."WorkEntry" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
-                                                "employee_id" INTEGER, "project_id" INTEGER, "order_id" INTEGER,\
-                                                "norm" REAL, "ext50" REAL, "ot50" REAL, "ot100" REAL, "ot150" REAL,\
-                                                "ot200" REAL, "otwk" REAL, "travel" REAL, "km" REAL, "meal" INTERGER,\
-                                                "allow50" INTERGER, "allow100" INTERGER)')
+    c.execute('CREATE TABLE "Henkilo" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
+                                              "nimi" TEXT NOT NULL, "sposti" TEXT NOT NULL)')
+    
+    c.execute('CREATE TABLE "Projekti" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
+                                               "numero" INTEGER NOT NULL, "kuvaus" TEXT DEFAULT "")')
+    
+    c.execute('CREATE TABLE "Tyosuorite" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
+                                                 "henkilo_id" INTEGER NOT NULL, "projekti_id" INTEGER NOT NULL,\
+                                                 "suorituspaiva" DATE NOT NULL, "tyoselostus" TEXT DEFAULT "", "tilaus" TEXT DEFAULT "",\
+                                                 "norm" REAL DEFAULT 0.0, "lisatyo" REAL DEFAULT 0.0, "ylit50" REAL DEFAULT 0.0,\
+                                                 "ylit100" REAL DEFAULT 0.0, "ylit150" REAL DEFAULT 0.0,\
+                                                 "ylit200" REAL DEFAULT 0.0, "viikkoylit" REAL DEFAULT 0.0, "matkat" REAL DEFAULT 0.0,\
+                                                 "km" REAL DEFAULT 0.0, "ateria" INTERGER DEFAULT 0,\
+                                                 "osapaivar" INTERGER DEFAULT 0, "paivaraha" INTERGER DEFAULT 0)')
 
-def insertReportToDatabase(report):
+def insertToDatabase(report):
+    if not conn:
+        print "Virhe: ei tietokanta yhteytta"
+        return
+
     c = conn.cursor()
+    count = 0
 
     # Insert Employee, if not exists
-    c.execute("SELECT id FROM Employee WHERE email=?", (report['employee_email'],))
-    emp_id = c.fetchone()
-
-    if not emp_id:
-        c.execute("INSERT INTO Employee (name, email) VALUES (?, ?)", (report['employee_name'], report['employee_email'],))
+    row = c.execute("SELECT id FROM Henkilo WHERE sposti=?", (report['sposti'],)).fetchone()
+    
+    if not row:
+        c.execute("INSERT INTO Henkilo (nimi, sposti) VALUES (?, ?)", (report['henkilo'], report['sposti'],))
+        emp_id = c.lastrowid
+    else:
+        emp_id = row[0]
 
     entries = report['entries']
     
     for entry in entries:
         # Insert Project, if not exists
-        c.execute("SELECT id FROM Project WHERE number=?", (entry['project_num'],))
-        prj_id = c.fetchone()
+        row = c.execute("SELECT id FROM Projekti WHERE numero=?", (entry['projekti_no'],)).fetchone()
+        
+        if not row:
+            c.execute("INSERT INTO Projekti (numero, kuvaus) VALUES (?, ?)", (entry['projekti_no'], '',))
+            prj_id = c.lastrowid
+        else:
+            prj_id = row[0]
 
-        if not prj_id:
-            c.execute("INSERT INTO Project (number, description) VALUES (?, ?)", (entry['project_num'], '',))
+        
+        date = entry['suorituspaiva'].date()
+        order = entry['tilaus'] if ('tilaus' in entry) else ''
+        row = c.execute("SELECT id FROM Tyosuorite WHERE henkilo_id=? AND projekti_id=? AND suorituspaiva=? AND tilaus=?",\
+                  (emp_id, prj_id, date, order)).fetchone()
 
-        # Insert order, if not exists
-        if entry['order_num']:
-            c.execute("SELECT id FROM Orderx WHERE number=?", (entry['order_num'],))
-            ord_id = c.fetchone()
+        if not row:
+            # mandatory fields
+            row_data = []
+            row_data.append(emp_id)
+            row_data.append(prj_id)
+            row_data.append(date)
+            
+            c.execute("INSERT INTO Tyosuorite (henkilo_id, projekti_id, suorituspaiva) VALUES (?,?,?)", row_data)
+            entry_id = c.lastrowid
 
-            if not ord_id:
-                c.execute("INSERT INTO Orderx (number, description) VALUES (?, ?)", (entry['order_num'], '',))
+            # optional fields
+            fields = ['norm', 'lisatyo', 'ylit50', 'ylit100', 'ylit150', \
+                      'ylit200', 'viikkoylit', 'matkat', 'km', 'ateria', \
+                      'osapaivar', 'paivaraha', 'tyoselostus', 'tilaus']
 
-        # Insert work description
-        c.execute("INSERT INTO WorkDescription (description) VALUES (?)", (entry['work_desc'],))
+            for i in range(0,len(fields)):
+                if fields[i] in entry:
+                    val = entry[fields[i]]
+                    query = "UPDATE Tyosuorite SET {cn}=? WHERE id=?".format(cn=fields[i])
+                    c.execute(query, (val,entry_id,))
+            
+            count += 1
 
     conn.commit()
+
+    print "Lisattiin tietokantaan " + str(count) + " tyosuoritetta!"
 
     return
 
@@ -74,33 +104,54 @@ def insertReportToDatabase(report):
 if __name__ == "__main__":
     db_file = "c:\\projects\\test.sqlite"
 
-    empty = connectToDatabase(db_file)
-    if empty:
-        createTables()
-
+    connectToDatabase(db_file)
+    
     # Test report
     report = {
-        'report_date' : datetime.datetime(2016,4,2),
-        'employee_name' : 'Mikki Hiiri',
-        'employee_email' : 'mikki.hiiri@ankkalinna.com',
+        'raportointi_pvm' : datetime.datetime(2016,4,2),
+        'henkilo' : 'Mikki Hiiri',
+        'sposti' : 'mikki.hiiri@disney.com',
         'entries' : [
-            { 'project_num' : 1234,
-              'order_num' : '5555',
-              'work_date' : datetime.datetime(2016,3,1),
-              'work_desc' : 'Programming',
+            { 'projekti_no' : 1234,
+              'tilaus' : '5555',
+              'suorituspaiva' : datetime.datetime(2016,3,1),
+              'tyoselostus' : 'Programming',
               'norm' : 7.5,
               'km' : 25,
-              'meal' : 1 },
-            { 'project_num' : 1234,
-              'order_num' : '6666',
-              'work_date' : datetime.datetime(2016,3,2),
-              'work_desc' : 'Testing',
+              'ateria' : 1 },
+            { 'projekti_no' : 1234,
+              'tilaus' : '6666',
+              'suorituspaiva' : datetime.datetime(2016,3,2),
+              'tyoselostus' : 'Testing',
               'norm' : 5
+            },
+            { 'projekti_no' : 1234,
+              'tilaus' : '7777',
+              'suorituspaiva' : datetime.datetime(2016,3,2),
+              'tyoselostus' : 'Testing',
+              'norm' : 5
+            },
+            { 'projekti_no' : 4321,
+              'tilaus' : '5555',
+              'suorituspaiva' : datetime.datetime(2016,3,3),
+              'tyoselostus' : 'Debugging',
+              'norm' : 0.4,
+              'lisatyo' : 0.5, 
+              'ylit50' : 0.6,
+              'ylit100' : 0.7,
+              'ylit150' : 0.8,
+              'ylit200' : 0.9,
+              'viikkoylit' : 1.1,
+              'matkat' : 1.2,
+              'km' : 100.5,
+              'ateria' : 0,
+              'osapaivar' : 0,
+              'paivaraha' : 1
             }
         ]
     }
 
-    insertReportToDatabase(report)
+    insertToDatabase(report)
 
     conn.close()
 

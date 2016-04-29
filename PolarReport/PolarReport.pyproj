@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>3126221f-81ff-4dc2-85c3-9dfe1949e925</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>DatabaseHandler.py</StartupFile>
+    <StartupFile>PolarReport.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -23,6 +23,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DatabaseHandler.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FindReports.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InvoiceGenerator.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PolarReport.py" />
