@@ -28,9 +28,6 @@
     <Compile Include="FindReports.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="InvoiceGenerator.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="PolarReport.py" />
     <Compile Include="ReportReader.py" />
   </ItemGroup>
