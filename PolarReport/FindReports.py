@@ -1,3 +1,6 @@
+﻿#
+# Finds Excel-files (.xlsx)  in current directory including subdirectories
+#
 import os
 from pprint import pprint
 
@@ -6,7 +9,6 @@ def enumReports(dir):
 
     for path, subdirs, files in os.walk(dir):
         for name in files:
-            print name
             if '.xlsx' in name:
                 reports.append(os.path.join(path, name))
 
