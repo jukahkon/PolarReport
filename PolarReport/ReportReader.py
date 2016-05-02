@@ -112,7 +112,7 @@ def workEntries(sheet, rows, cols):
                     entry[fields[k]] = v
 
             if entry:
-                entry['projekti_no'] = project
+                entry['tyonumero'] = project
                 entry['tilaus'] = order if order else ''
                 entry['suorituspaiva'] = sheet.cell(row=DATE_ROW, column=j).value
                 entry['tyoselite'] = description if description else ''

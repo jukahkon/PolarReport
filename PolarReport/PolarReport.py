@@ -1,14 +1,14 @@
 #
 # Main program
 #
-import FindReports
+import ReportFinder
 import ReportReader
 import DatabaseHandler
 import os
 from Settings import PathSettings
 
 dir = PathSettings['ReportDirectory']
-files = FindReports.enumReports(dir if dir else os.getcwd())
+files = ReportFinder.enumReports(dir if dir else os.getcwd())
 
 for file in files:
     report = ReportReader.readReport(file)

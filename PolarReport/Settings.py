@@ -7,6 +7,9 @@ PathSettings = {
     
     # If ReportDirectory is empty then reports are found from current directory.
     # 'ReportDirectory' : 'c:\Projects\PolarReport\PolarReport\TestData'
-    'ReportDirectory' : ''
+    'ReportDirectory' : '' ,
+
+
+    'ExcelCnv' : "c:\\Program Files\\Microsoft Office 15\\root\\office15\\excelcnv.exe"
 }
 

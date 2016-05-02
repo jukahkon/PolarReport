@@ -16,7 +16,7 @@ def enumReports(dir):
 
 # TEST
 if __name__ == "__main__":
-    dir = 'c:\Projects\PolarReport\PolarReport'
+    dir = ".\\TestData\\2016"
     
     reports = enumReports(dir)
 

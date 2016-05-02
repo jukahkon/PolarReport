@@ -25,7 +25,10 @@
     <Compile Include="DatabaseHandler.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FindReports.py">
+    <Compile Include="ExcelConversion.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ReportFinder.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PolarReport.py" />

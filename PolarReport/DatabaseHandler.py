@@ -27,7 +27,7 @@ def initializeDb():
                                      "sposti" TEXT NOT NULL)')
     
     c.execute('CREATE TABLE Projekti ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
-                                      "numero" INTEGER NOT NULL,\
+                                      "tyonumero" INTEGER NOT NULL,\
                                       "kuvaus" TEXT DEFAULT "")')
     
     c.execute('CREATE TABLE Tyosuorite ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
@@ -45,9 +45,9 @@ def initializeDb():
                                         "viikkoylit" REAL DEFAULT 0.0,\
                                         "matkat" REAL DEFAULT 0.0,\
                                         "km" REAL DEFAULT 0.0,\
-                                        "ateria" INTERGER DEFAULT 0,\
-                                        "osapaivar" INTERGER DEFAULT 0,\
-                                        "paivaraha" INTERGER DEFAULT 0)')
+                                        "ateria" INTEGER DEFAULT 0,\
+                                        "osapaivar" INTEGER DEFAULT 0,\
+                                        "paivaraha" INTEGER DEFAULT 0)')
         
     c.execute('CREATE TABLE Tyoselite ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
                                        "selite" TEXT NOT NULL)')
@@ -75,11 +75,11 @@ def insertToDatabase(report):
     
     for entry in entries:
         # Projektit
-        row = c.execute("SELECT id FROM Projekti WHERE numero=?", (entry['projekti_no'],)).fetchone()
+        row = c.execute("SELECT id FROM Projekti WHERE tyonumero=?", (entry['tyonumero'],)).fetchone()
         prj_id = None
         
         if not row:
-            c.execute("INSERT INTO Projekti (numero, kuvaus) VALUES (?, ?)", (entry['projekti_no'], '',))
+            c.execute("INSERT INTO Projekti (tyonumero, kuvaus) VALUES (?, ?)", (entry['tyonumero'], '',))
             prj_id = c.lastrowid
         else:
             prj_id = row[0]
@@ -149,26 +149,26 @@ if __name__ == "__main__":
         'henkilo' : 'Mikki Hiiri',
         'sposti' : 'mikki.hiiri@disney.com',
         'entries' : [
-            { 'projekti_no' : 1234,
+            { 'tyonumero' : 1234,
               'tilaus' : '5555',
               'suorituspaiva' : datetime.datetime(2016,3,1),
               'tyoselite' : 'Programming',
               'norm' : 7.5,
               'km' : 25,
               'ateria' : 1 },
-            { 'projekti_no' : 1234,
+            { 'tyonumero' : 1234,
               'tilaus' : '6666',
               'suorituspaiva' : datetime.datetime(2016,3,2),
               'tyoselite' : 'Testing',
               'norm' : 5
             },
-            { 'projekti_no' : 1234,
+            { 'tyonumero' : 1234,
               'tilaus' : '7777',
               'suorituspaiva' : datetime.datetime(2016,3,2),
               'tyoselite' : 'Testing',
               'norm' : 5
             },
-            { 'projekti_no' : 4321,
+            { 'tyonumero' : 4321,
               'tilaus' : '5555',
               'suorituspaiva' : datetime.datetime(2016,3,3),
               'tyoselite' : 'Debugging',
