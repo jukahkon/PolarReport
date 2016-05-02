@@ -5,7 +5,8 @@ PathSettings = {
     
     'Database' : 'c:\projects\polarreport.sqlite' ,
     
-    # If ReportDirectory is empty then reports are found from current directory.
+    # If ReportDirectory is empty then reports are processed from current directory
+    # and it subdirs.
     # 'ReportDirectory' : 'c:\Projects\PolarReport\PolarReport\TestData'
     'ReportDirectory' : '' ,
 
