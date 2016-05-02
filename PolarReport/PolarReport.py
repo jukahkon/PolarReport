@@ -4,14 +4,14 @@
 import FindReports
 import ReportReader
 import DatabaseHandler
+import os
+from Settings import PathSettings
 
-reportDir = 'c:\Projects\PolarReport\PolarReport\TestData'
-db_file = 'c:\projects\polarreport.sqlite'
-
-files = FindReports.enumReports(reportDir)
+dir = PathSettings['ReportDirectory']
+files = FindReports.enumReports(dir if dir else os.getcwd())
 
 for file in files:
     report = ReportReader.readReport(file)
-    DatabaseHandler.connectToDatabase(db_file)
+    DatabaseHandler.connectToDatabase(PathSettings['Database'])
     DatabaseHandler.insertToDatabase(report)
 

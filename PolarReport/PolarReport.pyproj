@@ -30,6 +30,9 @@
     </Compile>
     <Compile Include="PolarReport.py" />
     <Compile Include="ReportReader.py" />
+    <Compile Include="Settings.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

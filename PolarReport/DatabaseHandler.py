@@ -97,6 +97,7 @@ def insertToDatabase(report):
 
 
         # Tyosuoritteet
+        entry_id = None
         date = entry['suorituspaiva'].date()
         order = entry['tilaus'] if ('tilaus' in entry) else ''
         row = c.execute("SELECT id FROM Tyosuorite WHERE henkilo_id=? AND projekti_id=? AND\
@@ -113,11 +114,15 @@ def insertToDatabase(report):
             
             c.execute("INSERT INTO Tyosuorite (henkilo_id, projekti_id, tyoselite_id, suorituspaiva) VALUES (?,?,?,?)", row_data)
             entry_id = c.lastrowid
+            count += 1
+        else:
+            entry_id = row[0]
 
-            # optional fields
+        # optional fields
+        if entry_id:
             fields = ['norm', 'lisatyo', 'ylit50', 'ylit100', 'ylit150', \
-                      'ylit200', 'viikkoylit', 'matkat', 'km', 'ateria', \
-                      'osapaivar', 'paivaraha', 'tilaus']
+                        'ylit200', 'viikkoylit', 'matkat', 'km', 'ateria', \
+                        'osapaivar', 'paivaraha', 'tilaus']
 
             for i in range(0,len(fields)):
                 if fields[i] in entry:
@@ -125,7 +130,6 @@ def insertToDatabase(report):
                     query = "UPDATE Tyosuorite SET {cn}=? WHERE id=?".format(cn=fields[i])
                     c.execute(query, (val,entry_id,))
             
-            count += 1
 
     conn.commit()
 
@@ -135,7 +139,7 @@ def insertToDatabase(report):
 
 # TEST
 if __name__ == "__main__":
-    db_file = "c:\\projects\\test.sqlite"
+    db_file = ".\\..\\..\\test.sqlite"
 
     connectToDatabase(db_file)
     
