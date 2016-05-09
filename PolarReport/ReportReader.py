@@ -41,9 +41,10 @@ def extractData(wb):
         return
 
     data = {}
-    sheet = wb.get_sheet_by_name(COVERSHEETNAME)
-    
-    if not sheet:
+
+    try:
+        sheet = wb.get_sheet_by_name(COVERSHEETNAME)
+    except:
         print "Virhe: Yleistiedot-valilehtea ei loydy"
         return
     
@@ -54,6 +55,9 @@ def extractData(wb):
     if not (data['henkilo'] or data['sposti']):
         print "Virhe: henkilotiedot puuttuu Yleistiedot-valilehdelta"
         return
+
+    if "sukunimi" in data['sposti']:
+        print "Virhe: sposti virheellinen!"
 
     sheet = wb.get_sheet_by_name(DATASHEETNAME)
     if not sheet:
@@ -75,7 +79,7 @@ def indexProjects(sheet):
         txt = sheet.cell(row=i, column=PROJECT_NUMBER_COL).value
         
         if txt:
-            if re.match('\d{4}', unicode(txt)):
+            if re.match('^\d{4}$', unicode(txt)):
                 rows.append(i)
 
     return rows
@@ -95,7 +99,7 @@ def workEntries(sheet, rows, cols):
     entries = []
 
     for i in rows:
-        project = sheet.cell(row=i, column=PROJECT_NUMBER_COL).value
+        project = int(sheet.cell(row=i, column=PROJECT_NUMBER_COL).value)
         description = sheet.cell(row=i, column=WORK_DESC_COL).value
         order = sheet.cell(row=i, column=ORDER_NUMBER_COL).value
 

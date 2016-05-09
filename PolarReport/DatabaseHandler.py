@@ -54,6 +54,9 @@ def initializeDb():
 
 
 def insertToDatabase(report):
+    if not report:
+        return
+
     if not conn:
         print "Virhe: ei tietokanta yhteytta"
         return
