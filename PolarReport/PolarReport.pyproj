@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>3126221f-81ff-4dc2-85c3-9dfe1949e925</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>PolarReport.py</StartupFile>
+    <StartupFile>ExcelConversion.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
