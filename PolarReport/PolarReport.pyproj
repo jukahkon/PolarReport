@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>3126221f-81ff-4dc2-85c3-9dfe1949e925</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>ExcelConversion.py</StartupFile>
+    <StartupFile>ProjectNames.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,6 +26,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExcelConversion.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProjectNames.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ReportFinder.py">

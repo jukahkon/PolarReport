@@ -28,7 +28,7 @@ def initializeDb():
     
     c.execute('CREATE TABLE Projekti ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
                                       "tyonumero" INTEGER NOT NULL,\
-                                      "kuvaus" TEXT DEFAULT "")')
+                                      "tyonimi" TEXT DEFAULT "")')
     
     c.execute('CREATE TABLE Tyosuorite ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
                                         "henkilo_id" INTEGER NOT NULL,\
@@ -75,14 +75,15 @@ def insertToDatabase(report):
         emp_id = row[0]
 
     entries = report['entries']
-    
+    entries.extend(report['absenceEntries'])
+
     for entry in entries:
         # Projektit
         row = c.execute("SELECT id FROM Projekti WHERE tyonumero=?", (entry['tyonumero'],)).fetchone()
         prj_id = None
         
         if not row:
-            c.execute("INSERT INTO Projekti (tyonumero, kuvaus) VALUES (?, ?)", (entry['tyonumero'], '',))
+            c.execute("INSERT INTO Projekti (tyonumero, tyonimi) VALUES (?, ?)", (entry['tyonumero'], '',))
             prj_id = c.lastrowid
         else:
             prj_id = row[0]
@@ -188,7 +189,24 @@ if __name__ == "__main__":
               'osapaivar' : 0,
               'paivaraha' : 1
             }
-        ]
+        ],
+        'absenceEntries' : [
+            { 'norm': 7.5,
+              'suorituspaiva': datetime.datetime(2016, 3, 21),
+              'tilaus': '',
+              'tyonumero': '0000',
+              'tyoselite': u'Muu poissaolo'},
+            { 'norm': 7.5,
+              'suorituspaiva': datetime.datetime(2016, 3, 28),
+              'tilaus': '',
+              'tyonumero': '0000',
+              'tyoselite': u'Sairasloma'},
+            { 'norm': 7.5,
+              'suorituspaiva': datetime.datetime(2016, 3, 29),
+              'tilaus': '',
+              'tyonumero': '0000',
+              'tyoselite': u'Loma'}
+         ]
     }
 
     insertToDatabase(report)

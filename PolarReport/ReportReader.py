@@ -18,6 +18,7 @@ COVER_DATE_ROW = 5
 COVER_NAME_ROW = 7
 COVER_EMAIL_ROW = 8
 PROJECT_NUMBER_COL = 2
+ABSENCE_COL = 2
 WORK_DESC_COL = 4
 ORDER_NUMBER_COL = 6
 DATE_ROW = 7
@@ -66,10 +67,14 @@ def extractData(wb):
 
     project_rows = indexProjects(sheet)
 
+    absence_rows = indexAbsences(sheet)
+
     date_cols = indexDates(sheet)
 
     data['entries'] = workEntries(sheet, project_rows, date_cols)
         
+    data['absenceEntries'] = absenceEntries(sheet, absence_rows, date_cols)
+
     return data
 
 def indexProjects(sheet):
@@ -80,6 +85,24 @@ def indexProjects(sheet):
         
         if txt:
             if re.match('^\d{4}$', unicode(txt)):
+                rows.append(i)
+
+    return rows
+
+def indexAbsences(sheet):
+    rows = []
+    
+    for i in range(1,300):
+        txt = sheet.cell(row=i, column=ABSENCE_COL).value
+        
+        if txt:
+            if re.match('Muu poissaolo', unicode(txt)):
+                rows.append(i)
+
+            if re.match('Sairasloma', unicode(txt)):
+                rows.append(i)
+               
+            if re.match('Loma', unicode(txt)):
                 rows.append(i)
 
     return rows
@@ -118,6 +141,30 @@ def workEntries(sheet, rows, cols):
             if entry:
                 entry['tyonumero'] = project
                 entry['tilaus'] = order if order else ''
+                entry['suorituspaiva'] = sheet.cell(row=DATE_ROW, column=j).value
+                entry['tyoselite'] = description if description else ''
+                
+                entries.append(entry)
+
+    return entries
+
+def absenceEntries(sheet, rows, cols):
+    entries = []
+
+    for i in rows:
+        project = '0000'
+        description = sheet.cell(row=i, column=ABSENCE_COL).value
+        
+        for j in cols:
+            entry = {}
+            
+            v = sheet.cell(row=i, column=j).value
+            if v:
+                entry['norm'] = v
+
+            if entry:
+                entry['tyonumero'] = project
+                entry['tilaus'] = ''
                 entry['suorituspaiva'] = sheet.cell(row=DATE_ROW, column=j).value
                 entry['tyoselite'] = description if description else ''
                 
